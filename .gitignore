@@ -128,3 +128,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 credentials.json
+TODO.txt
+src/jupyter/
+courses-540 courses-720 courses-full courses-full.txt courses.txt
+bin/ffmpeg/
+courses*
+data
