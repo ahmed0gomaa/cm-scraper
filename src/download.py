@@ -1,4 +1,5 @@
 import json
+import re
 from glob import glob
 
 import requests
@@ -67,13 +68,21 @@ def convert_to_pgn(path):
         except:
             print('REMOVING', path)
             subprocess.run(['rm', path])
-            
 
 
-def download_pgn(part, path):
+def get_extension(r):
+    d = r.headers['Content-Disposition']
+    fname = re.findall("filename=(.+)", d)[0]
+    ext = fname.split('.')[-1]
+    return '.' + re.sub(r'\W+', '', ext)
+
+
+def download_amazon(part, path):
     r = requests.get(part['url'])
-    with open(path, 'w') as f:
-        f.write(r.content.decode('utf-8'))
+    ext = get_extension(r)
+
+    with open(suffix(path, ext), 'wb') as f:
+        f.write(r.content)
 
 
 def download_quiz(part, path):
@@ -93,7 +102,8 @@ def download_video(part, path):
 
 def download_part(part, path):
     if part['type'] == 'pgn':
-        path = suffix(path, '.pgn')
+        pass
+        # path = suffix(path, '.pgn')
     elif part['type'] == 'quiz':
         path = suffix(path, '.json')
         if path.exists():
@@ -108,7 +118,7 @@ def download_part(part, path):
         print('Getting', path, '...')
 
         if part['type'] == 'pgn':
-            download_pgn(part, path)
+            download_amazon(part, path)
         elif part['type'] == 'quiz':
             download_quiz(part, path)
         elif part['type'] == 'video':
